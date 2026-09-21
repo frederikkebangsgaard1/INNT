@@ -15,7 +15,7 @@ Tager udgangspunkt i at Node er installeret og appen Expo Go på din telefon
    ```
    npm install
    ```
-3. Lav en fil ved navn `.env` i projektmappen med en TMDB-nøgle (se nedenfor):
+3. Lav en fil ved navn `.env` i projektmappen med en TMDB-nøgle og (se nedenfor):
    ```
    EXPO_PUBLIC_TMDB_TOKEN=din_nøgle_her
    ```
@@ -31,5 +31,5 @@ Appen henter film og serier fra TMDB, så den kræver en API-nøgle. Derfor skal
 
 - Oprette din egen gratis nøgle på https://www.themoviedb.org under Settings > API, 
 
-Nøglen skal ligge i `.env`-filen som vist nedenfor.
+Nøglen skal ligge i `.env`-filen som vist nedenfor:
 EXPO_PUBLIC_TMDB_TOKEN=din_nøgle_her
