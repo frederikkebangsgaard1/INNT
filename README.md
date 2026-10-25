@@ -1,5 +1,18 @@
 ## Demovideo
-https://youtube.com/shorts/fjubY5A7CiM?is=3zk1Ew3IFduL6cMp 
+1. Udgave 1 (godkendelsesopgave 1): https://youtube.com/shorts/IwAcrCi0Ta8?si=zQwC2mH3yhPAVMAQ
+2. Udgave 2 (godkendelsesopgave 2): https://youtube.com/shorts/fjubY5A7CiM?is=3zk1Ew3IFduL6cMp
+
+
+## Nyt i 2. udgave 
+Ændringerne bygger på feedbacken fra første brugertest og fra godkendelsesopgave 1. De vigtigste ændringer er:
+- **Listerne gemmes** på telefonen med AsyncStorage, så de ikke forsvinder, når appen lukkes
+- **Ny skærm: Anbefalinger.** Fra en films detaljeside kan man trykke "Se lignende titler" og få anbefalinger fra TMDB
+- **Mere info på detaljesiden:** varighed, genrer og skuespillere
+- **Bekræftelse før man fjerner** en film fra en liste
+- **Opdateret forside:** tryk på "Set" i overblikket for at gå til Set-listen, og opret nye lister med "+ Ny liste", hvor man vælger navn, emoji og farve fra start
+- **Ryd søgning:** kryds i søgefeltet, så man nemt kan starte forfra
+- **Fake door test:** knappen "Del listen med venner" måler interessen for delte lister, før funktionen bygges
+- Al styling er samlet i `styles/GlobalStyle.js`
 
 
 ## Sådan køres appen
