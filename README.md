@@ -1,10 +1,5 @@
-# Min Watchlist
-
-Min Watchlist er en mobil app til at holde styr på film og serier, man gerne vil se. Man kan lave sine egne lister (fx Romkom, Film med kæresten eller Must Watch), søge efter film og serier via api nøgle tilTMDB, se plakater og beskrivelser, og markere ting som set, så de automatisk flytter over på en separat Set-liste.
-
-
 ## Demovideo
-https://youtube.com/shorts/IwAcrCi0Ta8?si=zQwC2mH3yhPAVMAQ 
+https://youtube.com/shorts/fjubY5A7CiM?is=3zk1Ew3IFduL6cMp 
 
 
 ## Sådan køres appen
