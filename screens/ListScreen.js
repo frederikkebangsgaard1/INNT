@@ -5,6 +5,7 @@ import { useWatchlist, WATCHED_ID } from "../context/WatchlistContext";
 import { styles, colors } from "../styles/GlobalStyle";
 import AddToListModal from "../components/AddToListModal";
 import ListEditModal from "../components/ListEditModal";
+import { confirmRemove, openShareFakeDoor } from "../utils/dialogs";
 
 export default function ListScreen({ route, navigation }) {
   const { listId } = route.params;
@@ -25,8 +26,8 @@ export default function ListScreen({ route, navigation }) {
         headerRight: isWatchedList
           ? undefined
           : () => (
-              <TouchableOpacity onPress={() => setEditVisible(true)} style={{ paddingHorizontal: 6 }}> 
-                <Text style={{ color: "#fff", fontSize: 26 }}>{"⋯"}</Text>
+              <TouchableOpacity onPress={() => setEditVisible(true)} style={styles.headerButton}>
+                <Text style={styles.headerButtonText}>{"⋯"}</Text>
               </TouchableOpacity>
             ),
       });
@@ -66,7 +67,11 @@ export default function ListScreen({ route, navigation }) {
                 <Text style={styles.smallButtonText}>Flyt</Text>
               </TouchableOpacity>
             )}
-            <TouchableOpacity style={styles.smallButtonDanger} onPress={() => removeFromList(listId, item)}>
+            {/* spørg før film fjernes */}
+            <TouchableOpacity
+              style={styles.smallButtonDanger}
+              onPress={() => confirmRemove(item.title, () => removeFromList(listId, item))}
+            >
               <Text style={styles.smallButtonText}>Fjern</Text>
             </TouchableOpacity>
           </View>
@@ -82,6 +87,14 @@ export default function ListScreen({ route, navigation }) {
         keyExtractor={(item) => item.mediaType + "-" + item.id}
         renderItem={renderItem}
         contentContainerStyle={styles.content}
+        // fake door knap (ikke på Set-listen)
+        ListHeaderComponent={
+          isWatchedList ? null : (
+            <TouchableOpacity style={[styles.buttonSecondary, styles.spacedBottom]} onPress={openShareFakeDoor}>
+              <Text style={styles.buttonSecondaryText}>👥 Del listen med venner</Text>
+            </TouchableOpacity>
+          )
+        }
         ListEmptyComponent={
           <Text style={styles.emptyText}>
             {isWatchedList ? "Ingen film set  endnu." : "Listen er tom. Gå til Søg og tilføj noget :)"}

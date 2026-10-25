@@ -1,8 +1,13 @@
 // Holder styr på alle lister et sted, så hver screen kan læse og ændre dem
-import React, { createContext, useContext, useState } from "react";
+// Listerne gemmes med AsyncStorage så de er der når appen åbnes igen
+import React, { createContext, useContext, useState, useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { seedLists, WATCHED_ID } from "../data/seed";
 
 export { WATCHED_ID };
+
+// Nøgle til at gemme listerne
+const STORAGE_KEY = "minwatchlist_lists";
 
 const WatchlistContext = createContext(null);
 
@@ -31,6 +36,30 @@ function moveBetween(prev, fromId, toId, movie, patch) {
 
 export function WatchlistProvider({ children }) {
   const [lists, setLists] = useState(seedLists);
+  const [loaded, setLoaded] = useState(false); // er listerne hentet?
+
+  // Hent gemte lister når appen starter
+  useEffect(() => {
+    async function load() {
+      try {
+        const saved = await AsyncStorage.getItem(STORAGE_KEY);
+        if (saved) setLists(JSON.parse(saved)); // laver tekst om til objekt
+      } catch (e) {
+        console.log("Kunne ikke hente lister", e);
+      }
+      setLoaded(true);
+    }
+    load();
+  }, []);
+
+  // Gem listerne hver gang de ændres
+  // venter til de er hentet, så start-listerne ikke overskriver dem
+  useEffect(() => {
+    if (!loaded) return;
+    AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(lists)).catch((e) =>
+      console.log("Kunne ikke gemme lister", e)
+    );
+  }, [lists, loaded]);
 
   // Opret en ny liste. Returnerer den, så vi kan lægge en film i den med det samme.
   function createList(name, emoji, color) {

@@ -24,6 +24,12 @@ export default function SearchScreen({ navigation }) {
     setLoading(false);
   }
 
+  // Ryd søgning (kryds knap)
+  function clearSearch() {
+    setQuery("");
+    setResults([]);
+  }
+
   // Visning af en film i søreresultater. og tryk for at se detaljer
   function renderItem({ item }) {
     return (
@@ -52,21 +58,29 @@ export default function SearchScreen({ navigation }) {
   return (
     <View style={styles.screen}>
       <View style={styles.searchBar}>
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Søg efter film eller serie"
-          value={query}
-          onChangeText={setQuery}
-          onSubmitEditing={handleSearch}
-          returnKeyType="search"
-        />
+        {/* Søgefelt med kryds til at rydde */}
+        <View style={styles.searchInputWrap}>
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Søg efter film eller serie"
+            value={query}
+            onChangeText={setQuery}
+            onSubmitEditing={handleSearch}
+            returnKeyType="search"
+          />
+          {query.length > 0 && (
+            <TouchableOpacity style={styles.clearButton} onPress={clearSearch}>
+              <Text style={styles.clearButtonText}>✕</Text>
+            </TouchableOpacity>
+          )}
+        </View>
         <TouchableOpacity style={styles.searchButton} onPress={handleSearch}>
           <Text style={styles.buttonText}>Søg</Text>
         </TouchableOpacity>
       </View>
 
       {loading ? (
-        <ActivityIndicator style={{ marginTop: 20 }} color={colors.primary} />
+        <ActivityIndicator style={styles.loader} color={colors.primary} />
       ) : (
         <FlatList
           data={results}

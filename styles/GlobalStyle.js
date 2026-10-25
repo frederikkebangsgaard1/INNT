@@ -204,16 +204,36 @@ export const styles = StyleSheet.create({
     padding: 16,
     alignItems: "center"
   },
-  searchInput: {
+  // Søgefelt og kryds i samme boks
+  searchInputWrap: {
     flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
     borderWidth: 1,
     borderColor: colors.border,
     borderRadius: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    fontSize: 15,
     backgroundColor: "#fff",
     marginRight: 8
+  },
+  searchInput: {
+    flex: 1,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    fontSize: 15
+  },
+  clearButton: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    backgroundColor: colors.unwatched,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 10
+  },
+  clearButtonText: {
+    fontSize: 12,
+    fontWeight: "bold",
+    color: colors.muted
   },
   searchButton: {
     backgroundColor: colors.primary,
@@ -414,5 +434,69 @@ export const styles = StyleSheet.create({
   },
   emojiText: {
     fontSize: 20
+  },
+
+  // Styles fra App.js og ListScreen
+  tabIcon: {
+    fontSize: 18
+  },
+  headerButton: {
+    paddingHorizontal: 6
+  },
+  headerButtonText: {
+    color: "#fff",
+    fontSize: 26
+  },
+
+  // Hjælpe-styles
+  flex1: {
+    flex: 1
+  },
+  fullWidth: {
+    alignSelf: "stretch"
+  },
+  spacedTop: {
+    marginTop: 12
+  },
+  spacedBottom: {
+    marginBottom: 12
+  },
+  smallButtonSpaced: {
+    marginTop: 8
+  },
+  loader: {
+    marginTop: 20
+  },
+
+  listCardBorder: {
+    borderLeftWidth: 5
+  },
+
+  // Detaljer: ekstra info
+  detailInfo: {
+    fontSize: 13,
+    color: colors.muted,
+    textAlign: "center",
+    marginTop: 6
+  },
+
+  // Forside: Dine lister + ny liste
+  sectionHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center"
+  },
+  sectionAction: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: colors.primary,
+    marginBottom: 8
+  },
+
+  // Anbefalinger
+  recoIntro: {
+    fontSize: 15,
+    color: colors.muted,
+    marginBottom: 12
   },
 });

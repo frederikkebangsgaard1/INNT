@@ -1,32 +1,29 @@
 // Forsiden/dashboard
 import React, { useState } from "react";
-import { View, Text, ScrollView, TextInput, TouchableOpacity, Pressable } from "react-native";
-import { useWatchlist } from "../context/WatchlistContext";
+import { View, Text, ScrollView, TouchableOpacity, Pressable } from "react-native";
+import { useWatchlist, WATCHED_ID } from "../context/WatchlistContext";
 import { styles } from "../styles/GlobalStyle";
+import ListEditModal from "../components/ListEditModal";
 
 export default function HomeScreen({ navigation }) {
-  const { lists, createList } = useWatchlist();
-  const [newName, setNewName] = useState("");
+  const { lists } = useWatchlist();
+  const [showCreate, setShowCreate] = useState(false); // vis ny liste vindue
 
   const allItems = lists.flatMap((l) => l.items);
   const total = allItems.length;
   const watched = allItems.filter((i) => i.watched).length; // antal markeret som set
   const unwatched = total - watched;
-  const pct = total ? Math.round((watched / total) * 100) : 0;
 
-  // Opret en ny liste ud fra teksten i feltet
-  function handleCreate() {
-    createList(newName.trim());
-    setNewName("");
+  // Set-listen er ikke med her, den ligger i overblikket
+  const myLists = lists.filter((l) => l.id !== WATCHED_ID);
+
+  // Åbn den nye liste med det samme
+  function handleCreated(newList) {
+    navigation.navigate("Liste", { listId: newList.id, name: newList.name });
   }
 
   return (
-    <ScrollView
-      style={styles.screen}
-      contentContainerStyle={styles.content}
-      keyboardShouldPersistTaps="handled"
-      automaticallyAdjustKeyboardInsets={true}
-    >
+    <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
       <Text style={styles.title}>Min Watchlist</Text>
 
       {/* Nøgletal */}
@@ -35,22 +32,32 @@ export default function HomeScreen({ navigation }) {
           <Text style={styles.statNumber}>{total}</Text>
           <Text style={styles.statLabel}>I alt</Text>
         </View>
-        <View style={styles.statCard}>
+        {/* Tryk på Set for at gå til Set-listen */}
+        <Pressable
+          style={styles.statCard}
+          onPress={() => navigation.navigate("Liste", { listId: WATCHED_ID, name: "Set" })}
+        >
           <Text style={styles.statNumber}>{watched}</Text>
-          <Text style={styles.statLabel}>Set</Text>
-        </View>
+          <Text style={styles.statLabel}>Set ›</Text>
+        </Pressable>
         <View style={styles.statCard}>
           <Text style={styles.statNumber}>{unwatched}</Text>
           <Text style={styles.statLabel}>Mangler</Text>
         </View>
       </View>
 
-      {/* Dine lister */}
-      <Text style={styles.sectionTitle}>Dine lister</Text>
-      {lists.map((list) => (
+      {/* Dine lister + knap til ny liste */}
+      <View style={styles.sectionHeader}>
+        <Text style={styles.sectionTitle}>Dine lister</Text>
+        <TouchableOpacity onPress={() => setShowCreate(true)}>
+          <Text style={styles.sectionAction}>+ Ny liste</Text>
+        </TouchableOpacity>
+      </View>
+
+      {myLists.map((list) => (
         <Pressable
           key={list.id}
-          style={[styles.listCard, { borderLeftWidth: 5, borderLeftColor: list.color }]}
+          style={[styles.listCard, styles.listCardBorder, { borderLeftColor: list.color }]}
           onPress={() => navigation.navigate("Liste", { listId: list.id, name: list.name })}
         >
           <View style={styles.listCardLeft}>
@@ -64,24 +71,18 @@ export default function HomeScreen({ navigation }) {
         </Pressable>
       ))}
 
-      {/* Opret ny liste */}
-      <View style={styles.card}>
-        <Text style={styles.sectionTitle}>Opret ny liste</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Fx Gyser eller Fredagsfilm"
-          value={newName}
-          onChangeText={setNewName}
-        />
-        <TouchableOpacity style={styles.button} onPress={handleCreate}>
-          <Text style={styles.buttonText}>Opret liste</Text>
-        </TouchableOpacity>
-      </View>
-
       {/* Genvej til søgning */}
-      <TouchableOpacity style={styles.buttonSecondary} onPress={() => navigation.navigate("Søg")}>
+      <TouchableOpacity style={[styles.buttonSecondary, styles.spacedTop]} onPress={() => navigation.navigate("Søg")}>
         <Text style={styles.buttonSecondaryText}>Søg efter film</Text>
       </TouchableOpacity>
+
+      {/* Opret ny liste (samme vindue som rediger) */}
+      <ListEditModal
+        visible={showCreate}
+        list={null}
+        onClose={() => setShowCreate(false)}
+        onCreated={handleCreated}
+      />
     </ScrollView>
   );
 }

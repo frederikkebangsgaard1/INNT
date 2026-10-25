@@ -1,4 +1,4 @@
-// Rediger eller slet en liste 
+// Rediger eller slet en liste. Bruges også til at oprette en ny liste
 import React, { useState } from "react";
 import { Modal, View, Text, TextInput, TouchableOpacity, Pressable, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
 import { useWatchlist } from "../context/WatchlistContext";
@@ -6,30 +6,35 @@ import { styles, colors } from "../styles/GlobalStyle";
 import { listColors, listEmojis } from "../data/options";
 
 // modal til at redigere en liste: navn, emoji og farve
-export default function ListEditModal({ visible, list, onClose, onDeleted }) {
-  const { updateList, deleteList } = useWatchlist();
+export default function ListEditModal({ visible, list, onClose, onDeleted, onCreated }) {
+  const { updateList, deleteList, createList } = useWatchlist();
   const [name, setName] = useState("");
   const [emoji, setEmoji] = useState("🎬");
   const [color, setColor] = useState(colors.primary);
   const [confirmDelete, setConfirmDelete] = useState(false);
 
-  // Når listen ændres, opdater inputfelterne
+  const isNew = !list; // ingen liste = ny liste
+
+  // Udfyld felterne når vinduet åbner (tomme hvis det er en ny liste)
   React.useEffect(() => {
-    if (list) {
-      setName(list.name);
-      setEmoji(list.emoji || "🎬");
-      setColor(list.color || colors.primary);
-      setConfirmDelete(false);
-    }
-  }, [list]);
+    if (!visible) return;
+    setName(list ? list.name : "");
+    setEmoji(list ? list.emoji || "🎬" : "🎬");
+    setColor(list ? list.color || colors.primary : colors.primary);
+    setConfirmDelete(false);
+  }, [list, visible]);
 
-  if (!list) return null;
-
-  // Gem ændringerne i listen
+  // Opret ny liste eller gem ændringer
   function handleSave() {
     if (!name.trim()) return;
-    updateList(list.id, { name: name.trim(), emoji: emoji, color: color });
-    onClose();
+    if (isNew) {
+      const newList = createList(name.trim(), emoji, color);
+      onClose();
+      if (newList && onCreated) onCreated(newList);
+    } else {
+      updateList(list.id, { name: name.trim(), emoji: emoji, color: color });
+      onClose();
+    }
   }
 
 // Slet liste
@@ -45,14 +50,20 @@ export default function ListEditModal({ visible, list, onClose, onDeleted }) {
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
-      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
+      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.flex1}>
       <Pressable style={styles.modalBackdrop} onPress={onClose}>
         <Pressable style={styles.modalCard} onPress={() => {}}>
           <ScrollView>
-            <Text style={styles.modalTitle}>Rediger liste</Text>
+            <Text style={styles.modalTitle}>{isNew ? "Ny liste" : "Rediger liste"}</Text>
 
-            <Text style={[styles.sectionTitle, { marginTop: 12 }]}>Navn</Text>
-            <TextInput style={styles.input} value={name} onChangeText={setName} placeholder="Listens navn" />
+            <Text style={[styles.sectionTitle, styles.spacedTop]}>Navn</Text>
+            <TextInput
+              style={styles.input}
+              value={name}
+              onChangeText={setName}
+              placeholder={isNew ? "Fx Gyser eller Fredagsfilm" : "Listens navn"}
+              autoFocus={isNew}
+            />
 
             <Text style={styles.sectionTitle}>Emoji</Text>
             <View style={styles.optionRow}>
@@ -79,12 +90,15 @@ export default function ListEditModal({ visible, list, onClose, onDeleted }) {
             </View>
 
             <TouchableOpacity style={styles.button} onPress={handleSave}>
-              <Text style={styles.buttonText}>Gem</Text>
+              <Text style={styles.buttonText}>{isNew ? "Opret liste" : "Gem"}</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.buttonDanger} onPress={handleDelete}>
-              <Text style={styles.buttonText}>{confirmDelete ? "Tryk igen for at slette" : "Slet liste"}</Text>
-            </TouchableOpacity>
+            {/* Slet knap kun hvis listen findes i forvejen */}
+            {!isNew && (
+              <TouchableOpacity style={styles.buttonDanger} onPress={handleDelete}>
+                <Text style={styles.buttonText}>{confirmDelete ? "Tryk igen for at slette" : "Slet liste"}</Text>
+              </TouchableOpacity>
+            )}
 
             <TouchableOpacity style={styles.modalClose} onPress={onClose}>
               <Text style={styles.modalCloseText}>Luk</Text>

@@ -13,7 +13,8 @@ import HomeScreen from "./screens/HomeScreen";
 import SearchScreen from "./screens/SearchScreen";
 import ListScreen from "./screens/ListScreen";
 import DetailScreen from "./screens/DetailScreen";
-import { colors } from "./styles/GlobalStyle";
+import RecommendationsScreen from "./screens/RecommendationsScreen";
+import { colors, styles } from "./styles/GlobalStyle";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -31,12 +32,12 @@ function Tabs() {
       <Tab.Screen
         name="Forside"
         component={HomeScreen}
-        options={{ tabBarIcon: ({ color }) => <Text style={{ fontSize: 18, color }}>{"🏠"}</Text> }}
+        options={{ tabBarIcon: ({ color }) => <Text style={[styles.tabIcon, { color }]}>{"🏠"}</Text> }}
       />
       <Tab.Screen
         name="Søg"
         component={SearchScreen}
-        options={{ tabBarIcon: ({ color }) => <Text style={{ fontSize: 18, color }}>{"🔍"}</Text> }}
+        options={{ tabBarIcon: ({ color }) => <Text style={[styles.tabIcon, { color }]}>{"🔍"}</Text> }}
       />
     </Tab.Navigator>
   );
@@ -56,6 +57,12 @@ export default function App() {
           <Stack.Screen name="Tabs" component={Tabs} options={{ headerShown: false }} />
           <Stack.Screen name="Liste" component={ListScreen} options={({ route }) => ({ title: route.params.name })} />
           <Stack.Screen name="Detaljer" component={DetailScreen} />
+          {/* Anbefalinger, titlen viser hvilken film den bygger på */}
+          <Stack.Screen
+            name="Anbefalinger"
+            component={RecommendationsScreen}
+            options={({ route }) => ({ title: "Ligner " + route.params.movie.title })}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </WatchlistProvider>

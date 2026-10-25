@@ -42,6 +42,3 @@ yarn-error.*
 
 # egen env-fil med API-nøgle
 .env
-.claude/
-AGENTS.md
-CLAUDE.md

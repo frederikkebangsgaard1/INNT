@@ -40,6 +40,42 @@ export async function searchTitles(query) {
   return results.map(toMovie);
 }
 
+// Hent anbefalinger ud fra en film/serie
+// Prøver først recommendations, og hvis den er tom så similar
+export async function getRecommendations(movie) {
+  const type = movie.mediaType === "tv" ? "tv" : "movie";
+
+  async function fetchList(endpoint) {
+    const url = BASE_URL + "/" + type + "/" + movie.id + "/" + endpoint + "?language=da-DK&page=1";
+    const response = await fetch(url, { headers });
+    const data = await response.json();
+    // similar har ikke media_type med, så den sættes her
+    return (data.results || []).map((item) => toMovie({ ...item, media_type: item.media_type || type }));
+  }
+
+  let results = await fetchList("recommendations");
+  if (results.length === 0) results = await fetchList("similar");
+  return results.slice(0, 15); // max 15
+}
+
+// Hent mere info om en titel (varighed, genrer, skuespillere)
+// credits kommer med i samme kald
+export async function getDetails(movie) {
+  const type = movie.mediaType === "tv" ? "tv" : "movie";
+  const url = BASE_URL + "/" + type + "/" + movie.id + "?language=da-DK&append_to_response=credits";
+  const response = await fetch(url, { headers });
+  const data = await response.json();
+
+  const runtime = type === "movie" ? data.runtime : (data.episode_run_time || [])[0];
+
+  return {
+    runtime: runtime || null, // i minutter
+    seasons: data.number_of_seasons || null, // kun for serier
+    genres: (data.genres || []).map((g) => g.name),
+    cast: ((data.credits && data.credits.cast) || []).slice(0, 4).map((c) => c.name),
+  };
+}
+
 // Laver TMDB-resultat om til eget movie-objekt
 export function toMovie(item) {
   const isTv = item.media_type === "tv";

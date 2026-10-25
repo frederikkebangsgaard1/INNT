@@ -39,7 +39,7 @@ export default function AddToListModal({ visible, movie, onClose, mode = "add", 
   // Render modal med lister og input til ny liste
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
-      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
+      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.flex1}>
       <Pressable style={styles.modalBackdrop} onPress={onClose}>
         <Pressable style={styles.modalCard} onPress={() => {}}>
           <Text style={styles.modalTitle}>{isMove ? "Flyt til liste" : "Tilføj til liste"}</Text>
